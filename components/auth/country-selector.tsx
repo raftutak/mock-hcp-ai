@@ -8,12 +8,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
+import ReactCountryFlag from "react-country-flag";
 
 const countries = [
-  { code: "AU", name: "Australia", flag: "🇦🇺" },
-  { code: "CN", name: "China", flag: "🇨🇳" },
-  { code: "DE", name: "Germany", flag: "🇩🇪" },
-  { code: "TH", name: "Thailand", flag: "🇹🇭" },
+  { code: "AU", name: "Australia" },
+  { code: "CN", name: "China" },
+  { code: "DE", name: "Germany" },
+  { code: "TH", name: "Thailand" },
 ];
 
 interface CountrySelectorProps {
@@ -42,7 +43,12 @@ export function CountrySelector({ value, onValueChange }: CountrySelectorProps) 
               className="rounded-none focus:bg-[#f1f5fb]"
             >
               <div className="flex items-center gap-2">
-                <span className="text-xl">{country.flag}</span>
+                <ReactCountryFlag
+                  countryCode={country.code}
+                  svg
+                  title={country.name}
+                  style={{ width: "1.5rem", height: "1.5rem" }}
+                />
                 <span>{country.name}</span>
               </div>
             </SelectItem>

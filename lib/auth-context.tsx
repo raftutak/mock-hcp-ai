@@ -7,6 +7,7 @@ import {
   useEffect,
   ReactNode,
 } from "react";
+import { onGigyaReady } from "@/lib/gigya-ready";
 
 // Extend Window interface for Gigya
 declare global {
@@ -56,12 +57,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     // Wait for Gigya to be ready
     if (typeof window !== "undefined") {
-      (window as any).onGigyaServiceReady = checkSession;
+      const cleanup = onGigyaReady(checkSession);
 
-      // If Gigya is already loaded, check immediately
-      if (window.gigya) {
-        checkSession();
-      }
+      return () => {
+        cleanup();
+      };
     }
   }, []);
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, type ComponentType } from "react";
 import {
   Accordion,
   AccordionContent,
@@ -13,6 +13,14 @@ import { Label } from "@/components/ui/label";
 import { Mail, Lock, Phone, Key, User } from "lucide-react";
 import { CountrySelector } from "@/components/auth/country-selector";
 import { AiLoginPocButton } from "@/components/auth/ai-login-poc-button";
+import {
+  SiFacebook,
+  SiGoogle,
+  SiKakaotalk,
+  SiLine,
+  SiLinkedin,
+  SiWechat,
+} from "@icons-pack/react-simple-icons";
 
 // Extend Window interface for Gigya
 declare global {
@@ -171,6 +179,28 @@ export function LoginPocContainer() {
     console.log("Passkey Login:", { username });
   };
 
+  const providerIcons: Record<
+    string,
+    ComponentType<{ className?: string; color?: string; title?: string }>
+  > = {
+    googleplus: SiGoogle,
+    linkedin: SiLinkedin,
+    facebook: SiFacebook,
+    line: SiLine,
+    kakaotalk: SiKakaotalk,
+    wechat: SiWechat,
+  };
+
+  const getProviderInitials = (label: string) => {
+    const words = label.split(" ");
+    if (words.length === 1) {
+      return words[0].slice(0, 2).toUpperCase();
+    }
+    return (
+      words[0].charAt(0).toUpperCase() + words[1].charAt(0).toUpperCase()
+    );
+  };
+
   const renderLoginMethod = (methodValue: string) => {
     const method = loginMethodsConfig.find((m) => m.value === methodValue);
     if (!method) return null;
@@ -281,41 +311,27 @@ export function LoginPocContainer() {
                     className="w-full justify-start rounded-none border-gray-300 hover:bg-[#f1f5fb] hover:border-[#002e6d] transition-all"
                     onClick={() => handleSocialLogin(provider.name)}
                   >
-                    <div
-                      className="w-5 h-5 mr-3 flex items-center justify-center rounded-none"
-                      style={{
-                        backgroundColor: provider.color,
-                        color:
-                          provider.name === "kakaotalk" ? "#000000" : "#FFFFFF",
-                      }}
-                    >
-                      {provider.name === "googleplus" && (
-                        <span className="text-xs font-bold">G</span>
-                      )}
-                      {provider.name === "linkedin" && (
-                        <span className="text-xs font-bold">in</span>
-                      )}
-                      {provider.name === "facebook" && (
-                        <span className="text-xs font-bold">f</span>
-                      )}
-                      {provider.name === "doccheck" && (
-                        <span className="text-xs font-bold">DC</span>
-                      )}
-                      {provider.name === "line" && (
-                        <span className="text-xs font-bold">L</span>
-                      )}
-                      {provider.name === "finmet" && (
-                        <span className="text-xs font-bold">FM</span>
-                      )}
-                      {provider.name === "prosante" && (
-                        <span className="text-xs font-bold">PS</span>
-                      )}
-                      {provider.name === "kakaotalk" && (
-                        <span className="text-xs font-bold">K</span>
-                      )}
-                      {provider.name === "wechat" && (
-                        <span className="text-xs font-bold">W</span>
-                      )}
+                    <div className="w-5 h-5 mr-3 flex items-center justify-center rounded-none">
+                      {(() => {
+                        const Icon = providerIcons[provider.name];
+                        if (Icon) {
+                          return (
+                            <Icon
+                              className="h-5 w-5"
+                              color={provider.color}
+                              title={provider.label}
+                            />
+                          );
+                        }
+                        return (
+                          <span
+                            className="text-xs font-bold"
+                            style={{ color: provider.color }}
+                          >
+                            {getProviderInitials(provider.label)}
+                          </span>
+                        );
+                      })()}
                     </div>
                     Continue with {provider.label}
                   </Button>

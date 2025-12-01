@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Loader } from "@/components/ui/loader";
 import { AiHelpButton } from "@/components/auth/ai-help-button";
+import { onGigyaReady } from "@/lib/gigya-ready";
 
 // Extend Window interface for Gigya
 declare global {
@@ -100,19 +101,11 @@ export function RegisterContainer() {
     };
 
     // Use the recommended onGigyaServiceReady callback
-    window.onGigyaServiceReady = () => {
-      initGigya();
-    };
-
-    // If Gigya is already loaded, call init immediately
-    if (window.gigya) {
-      initGigya();
-    }
+    const cleanupReady = onGigyaReady(initGigya);
 
     return () => {
-      // Cleanup
-      window.onGigyaServiceReady = undefined;
       window.onAfterScreenLoadPlatform = undefined;
+      cleanupReady();
     };
   }, []);
 
