@@ -295,72 +295,87 @@ export function AiHelpButton() {
       </TooltipProvider>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="sm:max-w-[500px]">
-          <DialogHeader>
-            <DialogTitle>AI Assistant</DialogTitle>
-            <DialogDescription>
-              {showAoiPrompt
-                ? "Would you like help selecting Areas of Interest based on your profession, specialty, and position?"
-                : "Tell me something about your profession so I can assist you better."}
-            </DialogDescription>
-          </DialogHeader>
-          <div className="py-2">
-            {showProfessionInput && (
-              <Textarea
-                placeholder="e.g., I'm a cardiologist specializing in heart failure..."
-                value={profession}
-                onChange={(e) => setProfession(e.target.value)}
-                className="min-h-[120px]"
-              />
-            )}
-            {showAoiPrompt && (
-              <p className="text-sm text-muted-foreground">
-                Based on your selected profession, specialty, and job role, I
-                can help you select relevant Areas of Interest.
-              </p>
-            )}
-          </div>
-          <DialogFooter className="flex-col gap-3">
-            <div className="flex gap-2 w-full justify-end">
-              <Button
-                variant="outline"
-                onClick={handleCancel}
-                className="rounded-none"
-                disabled={isLoading}
-              >
-                Cancel
-              </Button>
+        <DialogContent
+          className={`sm:max-w-[500px] ${
+            isLoading
+              ? "overflow-visible border-0 bg-transparent shadow-none p-0"
+              : ""
+          }`}
+        >
+          {isLoading && (
+            <div className="ai-dialog-gradient-border absolute inset-0 rounded-lg" />
+          )}
+          <div
+            className={`relative z-10 ${
+              isLoading ? "bg-background rounded-lg p-6" : ""
+            }`}
+          >
+            <DialogHeader>
+              <DialogTitle>AI Assistant</DialogTitle>
+              <DialogDescription>
+                {showAoiPrompt
+                  ? "Would you like help selecting Areas of Interest based on your profession, specialty, and position?"
+                  : "Tell me something about your profession so I can assist you better."}
+              </DialogDescription>
+            </DialogHeader>
+            <div className="py-2">
               {showProfessionInput && (
-                <Button
-                  onClick={handleSubmitProfession}
-                  className="bg-[#002e6d] hover:bg-[#002e6d]/90 rounded-none"
-                  disabled={isLoading || !profession.trim()}
-                >
-                  {isLoading ? "Processing..." : "Submit"}
-                </Button>
+                <Textarea
+                  placeholder="e.g., I'm a cardiologist specializing in heart failure..."
+                  value={profession}
+                  onChange={(e) => setProfession(e.target.value)}
+                  className="min-h-[120px]"
+                />
               )}
               {showAoiPrompt && (
-                <Button
-                  onClick={handleSubmitAoi}
-                  className="bg-[#002e6d] hover:bg-[#002e6d]/90 rounded-none"
-                  disabled={isLoading}
-                >
-                  {isLoading ? "Processing..." : "Yes, help me"}
-                </Button>
+                <p className="text-sm text-muted-foreground">
+                  Based on your selected profession, specialty, and job role, I
+                  can help you select relevant Areas of Interest.
+                </p>
               )}
             </div>
-          </DialogFooter>
-          {showAoiPrompt && (
-            <div className="flex justify-end">
-              <button
-                onClick={handleAskForProfession}
-                className="text-sm text-[#002e6d] hover:underline disabled:opacity-50 disabled:no-underline"
-                disabled={isLoading}
-              >
-                Ask for profession again
-              </button>
-            </div>
-          )}
+            <DialogFooter className="flex-col gap-3">
+              <div className="flex gap-2 w-full justify-end">
+                <Button
+                  variant="outline"
+                  onClick={handleCancel}
+                  className="rounded-none"
+                  disabled={isLoading}
+                >
+                  Cancel
+                </Button>
+                {showProfessionInput && (
+                  <Button
+                    onClick={handleSubmitProfession}
+                    className="bg-[#002e6d] hover:bg-[#002e6d]/90 rounded-none"
+                    disabled={isLoading || !profession.trim()}
+                  >
+                    {isLoading ? "Processing..." : "Submit"}
+                  </Button>
+                )}
+                {showAoiPrompt && (
+                  <Button
+                    onClick={handleSubmitAoi}
+                    className="bg-[#002e6d] hover:bg-[#002e6d]/90 rounded-none"
+                    disabled={isLoading}
+                  >
+                    {isLoading ? "Processing..." : "Yes, help me"}
+                  </Button>
+                )}
+              </div>
+            </DialogFooter>
+            {showAoiPrompt && (
+              <div className="flex justify-end">
+                <button
+                  onClick={handleAskForProfession}
+                  className="text-sm text-[#002e6d] hover:underline disabled:opacity-50 disabled:no-underline pt-3"
+                  disabled={isLoading}
+                >
+                  Ask for profession again
+                </button>
+              </div>
+            )}
+          </div>
         </DialogContent>
       </Dialog>
     </>

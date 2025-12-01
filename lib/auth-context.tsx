@@ -23,14 +23,24 @@ declare global {
           verify: (params: { callback: (response: any) => void }) => void;
         };
         logout: (params: { callback: (response: any) => void }) => void;
+        getAccountInfo: (params: {
+          include?: string;
+          callback: (response: any) => void;
+        }) => void;
       };
     };
   }
 }
 
+interface UserProfile {
+  firstName?: string;
+  lastName?: string;
+}
+
 interface AuthContextType {
   isLoggedIn: boolean;
   isLoading: boolean;
+  userProfile: UserProfile | null;
   logout: () => void;
 }
 
@@ -39,6 +49,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
 
   useEffect(() => {
     // Check session when Gigya is ready
@@ -46,8 +57,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (window.gigya?.accounts?.session?.verify) {
         window.gigya.accounts.session.verify({
           callback: (response: any) => {
-            setIsLoggedIn(response.errorCode === 0);
-            setIsLoading(false);
+            const loggedIn = response.errorCode === 0;
+            setIsLoggedIn(loggedIn);
+
+            // If logged in, fetch user profile
+            if (loggedIn && window.gigya?.accounts?.getAccountInfo) {
+              window.gigya.accounts.getAccountInfo({
+                include: "profile",
+                callback: (accountResponse: any) => {
+                  if (accountResponse.errorCode === 0 && accountResponse.profile) {
+                    setUserProfile({
+                      firstName: accountResponse.profile.firstName,
+                      lastName: accountResponse.profile.lastName,
+                    });
+                  }
+                  setIsLoading(false);
+                },
+              });
+            } else {
+              setIsLoading(false);
+            }
           },
         });
       } else {
@@ -76,7 +105,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, isLoading, logout }}>
+    <AuthContext.Provider value={{ isLoggedIn, isLoading, userProfile, logout }}>
       {children}
     </AuthContext.Provider>
   );

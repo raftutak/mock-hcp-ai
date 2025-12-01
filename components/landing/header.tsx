@@ -13,23 +13,30 @@ import {
 import { useAuth } from "@/lib/auth-context";
 
 export function Header() {
-  const { isLoggedIn, logout } = useAuth();
+  const { isLoggedIn, userProfile, logout } = useAuth();
 
   return (
     <header className="border-b border-gray-200 bg-white">
       <div className="max-w-[1180px] mx-auto px-6 flex items-center justify-between min-h-[4.25rem] gap-6">
         {/* Logo group */}
-        <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-          <Image
-            src="https://cdn.cookielaw.org/logos/d83b6e8f-2787-46e5-b85f-ad52b3a0acb6/b1259cd3-622f-44d3-ad52-9ab3d83cd8ad/0817c5fe-6cff-4070-b7e7-d2d1f28e976e/Roche_Logo_800px_Blue_RGB_Roche_Logo_RGB_(1).png"
-            alt="Roche"
-            width={120}
-            height={40}
-            className="h-[30px] w-auto"
-          />
-          <span className="text-gray-400">|</span>
-          <div className="font-semibold text-[#004c97]">Roche Hub</div>
-        </Link>
+        <div className="flex items-center gap-6">
+          <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
+            <Image
+              src="https://cdn.cookielaw.org/logos/d83b6e8f-2787-46e5-b85f-ad52b3a0acb6/b1259cd3-622f-44d3-ad52-9ab3d83cd8ad/0817c5fe-6cff-4070-b7e7-d2d1f28e976e/Roche_Logo_800px_Blue_RGB_Roche_Logo_RGB_(1).png"
+              alt="Roche"
+              width={120}
+              height={40}
+              className="h-[30px] w-auto"
+            />
+            <span className="text-gray-400">|</span>
+            <div className="font-semibold text-[#004c97]">Roche Hub</div>
+          </Link>
+          {isLoggedIn && userProfile && (userProfile.firstName || userProfile.lastName) && (
+            <div className="text-sm text-gray-700">
+              Welcome back, {userProfile.firstName} {userProfile.lastName}
+            </div>
+          )}
+        </div>
 
         {/* Main navigation */}
         <nav className="hidden lg:flex items-center gap-5 text-[0.95rem] text-gray-700">

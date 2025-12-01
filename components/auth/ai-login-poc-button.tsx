@@ -63,10 +63,25 @@ export function AiLoginPocButton({
         // Germany-specific hardcoded sorting
         if (countryCode === "DE") {
           // Force sociallogins to be first
-          sortedMethods = ["sociallogins", ...sortedMethods.filter(m => m !== "sociallogins")];
+          sortedMethods = [
+            "sociallogins",
+            ...sortedMethods.filter((m) => m !== "sociallogins"),
+          ];
 
           // Force doccheck to be first in social providers, keep the rest as returned
-          sortedSocials = ["doccheck", ...sortedSocials.filter(s => s !== "doccheck")];
+          sortedSocials = [
+            "doccheck",
+            ...sortedSocials.filter((s) => s !== "doccheck"),
+          ];
+        }
+
+        // Australia-specific hardcoded sorting
+        if (countryCode === "AU") {
+          // Force standard to be first
+          sortedMethods = [
+            "standard",
+            ...sortedMethods.filter((m) => m !== "standard"),
+          ];
         }
 
         // Close modal first
@@ -108,37 +123,42 @@ export function AiLoginPocButton({
       </TooltipProvider>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="sm:max-w-[500px]">
-          <DialogHeader>
-            <DialogTitle>AI Assistant</DialogTitle>
-            <DialogDescription>
-              Would you like a suggestion for the most popular login method for
-              your country?
-            </DialogDescription>
-          </DialogHeader>
-          <div className="py-2">
-            <p className="text-sm text-muted-foreground">
-              Based on your location ({countryCode}), I can recommend the most
-              commonly used login methods to make signing in easier.
-            </p>
+        <DialogContent className={`sm:max-w-[500px] ${isLoading ? 'overflow-visible border-0 bg-transparent shadow-none p-0' : ''}`}>
+          {isLoading && (
+            <div className="ai-dialog-gradient-border absolute inset-0 rounded-lg" />
+          )}
+          <div className={`relative z-10 ${isLoading ? 'bg-background rounded-lg p-6' : ''}`}>
+            <DialogHeader>
+              <DialogTitle>AI Assistant</DialogTitle>
+              <DialogDescription>
+                Would you like a suggestion for the most popular login method for
+                your country?
+              </DialogDescription>
+            </DialogHeader>
+            <div className="py-2">
+              <p className="text-sm text-muted-foreground">
+                Based on your location ({countryCode}), I can recommend the most
+                commonly used login methods to make signing in easier.
+              </p>
+            </div>
+            <DialogFooter>
+              <Button
+                variant="outline"
+                onClick={handleCancel}
+                className="rounded-none"
+                disabled={isLoading}
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleSubmit}
+                className="bg-[#002e6d] hover:bg-[#002e6d]/90 rounded-none"
+                disabled={isLoading}
+              >
+                {isLoading ? "Processing..." : "Yes, help me"}
+              </Button>
+            </DialogFooter>
           </div>
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={handleCancel}
-              className="rounded-none"
-              disabled={isLoading}
-            >
-              Cancel
-            </Button>
-            <Button
-              onClick={handleSubmit}
-              className="bg-[#002e6d] hover:bg-[#002e6d]/90 rounded-none"
-              disabled={isLoading}
-            >
-              {isLoading ? "Processing..." : "Yes, help me"}
-            </Button>
-          </DialogFooter>
         </DialogContent>
       </Dialog>
     </>

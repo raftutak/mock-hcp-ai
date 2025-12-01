@@ -138,3 +138,47 @@
 .login-method-highlight {
   animation: blink-shadow 1s ease-in-out 5;
 }
+
+@property --gradient-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes rotation {
+  0% {
+    --gradient-angle: 0deg;
+  }
+  100% {
+    --gradient-angle: 360deg;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.ai-dialog-gradient-border {
+  pointer-events: none;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.ai-dialog-gradient-border::before {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  border-radius: 0.5rem;
+  background: linear-gradient(
+    var(--gradient-angle),
+    #5ddcff,
+    #3c67e3 43%,
+    #4e00c2
+  );
+  animation: rotation 4s linear infinite;
+  filter: blur(12px);
+}
